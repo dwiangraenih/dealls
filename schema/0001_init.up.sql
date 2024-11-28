@@ -66,4 +66,4 @@ ALTER TABLE "user_swipe_log"
     ADD CONSTRAINT "fk_user_swipe_log_swiper_id" FOREIGN KEY ("swiper_id") REFERENCES "account" ("id");
 
 ALTER TABLE "user_swipe_log"
-    ADD CONSTRAINT "fk_user_swipe_log_swiper_id" FOREIGN KEY ("swiper_id") REFERENCES "account" ("id");
+    ADD CONSTRAINT "fk_user_swipe_log_swipee_id" FOREIGN KEY ("swipee_id") REFERENCES "account" ("id");
