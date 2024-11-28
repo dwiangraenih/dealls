@@ -1,0 +1,31 @@
+[api]
+host = "0.0.0.0"
+port = 8090
+read_timeout = 30
+write_timeout = 30
+idle_timeout = 30
+graceful_timeout = 10
+debug = false # pprof endpoints
+
+[http_client]
+client_timeout = 30 # second
+transport_disable_keep_alive = false # default = enable keep alive
+transport_max_idle_conn = 256
+transport_max_idle_conn_per_host = 256
+transport_max_conn_per_host = 0 # 0 = unlimited
+transport_response_header_timeout = 20 # second
+transport_idle_conn_timeout = 30 # second
+transport_tls_handshake_timeout = 10 # second
+transport_dial_timeout = 30 # second
+transport_dial_keep_alive_timeout = 30 # second
+
+[postgres]
+host = {{host}}
+port = {{port}}
+user = {{user}}
+password = {{password}}
+database = {{database}}
+
+[rsa]
+private_key =
+public_key =
