@@ -12,6 +12,7 @@ type ServiceManager interface {
 	AuthService() interfaces.IAuthService
 	AccountService() interfaces.IAccountService
 	AccountManager() middleware.AccountToken
+	UserSwipeLogService() interfaces.IUserSwipeLogService
 }
 
 type serviceManager struct {
@@ -31,7 +32,7 @@ var (
 	authService     interfaces.IAuthService
 )
 
-func (s serviceManager) AuthService() interfaces.IAuthService {
+func (s *serviceManager) AuthService() interfaces.IAuthService {
 	authServiceOnce.Do(func() {
 		key := s.infra.Config().Sub("rsa")
 		authService = service.NewAuthService(
@@ -47,7 +48,7 @@ var (
 	accountService     interfaces.IAccountService
 )
 
-func (s serviceManager) AccountService() interfaces.IAccountService {
+func (s *serviceManager) AccountService() interfaces.IAccountService {
 	accountServiceOnce.Do(func() {
 		accountService = service.NewAccountService(s.repo.AccountRepoManager(), s.AuthService())
 	})
@@ -66,4 +67,16 @@ func (s *serviceManager) AccountManager() middleware.AccountToken {
 	})
 
 	return accountManager
+}
+
+var (
+	userSwipeLogServiceOnce sync.Once
+	userSwipeLogService     interfaces.IUserSwipeLogService
+)
+
+func (s *serviceManager) UserSwipeLogService() interfaces.IUserSwipeLogService {
+	userSwipeLogServiceOnce.Do(func() {
+		userSwipeLogService = service.NewUserSwipeLogService(s.repo.UserSwipeLogRepoManager(), s.repo.AccountRepoManager())
+	})
+	return userSwipeLogService
 }

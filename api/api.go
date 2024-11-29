@@ -41,6 +41,7 @@ func (c *server) endpoint() {
 	authHandler := handler.NewAuthHandler(c.serviceManager.AuthService())
 	accountHandler := handler.NewAccountHandler(c.serviceManager.AccountService())
 	token := middleware.NewTokenValidator(c.serviceManager.AccountManager())
+	userSwipeLogHandler := handler.NewUserSwipeLogHandler(c.serviceManager.UserSwipeLogService())
 
 	c.router.Route("/dealls", func(r chi.Router) {
 		// auth
@@ -56,6 +57,11 @@ func (c *server) endpoint() {
 			})
 			an.With(token.RequireAccountToken()).Get("/list", accountHandler.GetListAccountNewMatchPagination)
 
+		})
+
+		// swipe
+		r.Route("/swipe", func(an chi.Router) {
+			an.With(token.RequireAccountToken()).Post("/interaction", userSwipeLogHandler.ProcessUserSwipe)
 		})
 	})
 

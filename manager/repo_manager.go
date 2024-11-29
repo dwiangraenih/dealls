@@ -9,6 +9,7 @@ import (
 
 type RepoManager interface {
 	AccountRepoManager() interfaces.IAccountRepo
+	UserSwipeLogRepoManager() interfaces.IUserSwipeLogRepo
 }
 
 type repoManager struct {
@@ -32,4 +33,17 @@ func (r *repoManager) AccountRepoManager() interfaces.IAccountRepo {
 	})
 
 	return accountRepo
+}
+
+var (
+	userSwipeLogRepoOnce sync.Once
+	userSwipeLogRepo     interfaces.IUserSwipeLogRepo
+)
+
+func (r *repoManager) UserSwipeLogRepoManager() interfaces.IUserSwipeLogRepo {
+	userSwipeLogRepoOnce.Do(func() {
+		userSwipeLogRepo = repo.NewUserSwipeLogRepo(r.infra.SQLDB())
+	})
+
+	return userSwipeLogRepo
 }
