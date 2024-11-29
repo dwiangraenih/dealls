@@ -67,3 +67,40 @@ ALTER TABLE "user_swipe_log"
 
 ALTER TABLE "user_swipe_log"
     ADD CONSTRAINT "fk_user_swipe_log_swipee_id" FOREIGN KEY ("swipee_id") REFERENCES "account" ("id");
+
+
+-- func trigger for update swipe counter
+CREATE OR REPLACE FUNCTION update_swipe_count()
+RETURNS TRIGGER AS $$
+DECLARE
+current_day_start DATE;
+    today_swipe_count INT;
+BEGIN
+    -- Define the start of the current day in UTC+7
+    current_day_start := (CURRENT_TIMESTAMP)::DATE;
+
+    -- Count today's swipes for the current swiper_id
+SELECT COUNT(*)
+INTO today_swipe_count
+FROM user_swipe_log
+WHERE swiper_id = NEW.swiper_id
+  AND (created_at)::DATE = current_day_start;
+
+-- Upsert the swipe count record
+INSERT INTO swipe_count (account_id, total_swipe_a_day, total_swipe)
+VALUES (NEW.swiper_id, today_swipe_count, 1)
+    ON CONFLICT (account_id)
+    DO UPDATE SET
+    total_swipe_a_day = today_swipe_count,
+               total_swipe = swipe_count.total_swipe + 1;
+
+
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create the trigger
+CREATE TRIGGER trigger_update_swipe_count
+    AFTER INSERT ON user_swipe_log
+    FOR EACH ROW
+    EXECUTE FUNCTION update_swipe_count();
