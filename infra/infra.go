@@ -1,9 +1,9 @@
 package infra
 
 import (
-	"database/sql"
 	"github.com/jackc/pgx"
 	"github.com/jackc/pgx/stdlib"
+	"github.com/jmoiron/sqlx"
 	"github.com/spf13/viper"
 	"log"
 	"os"
@@ -15,7 +15,7 @@ import (
 
 type Infra interface {
 	Config() *viper.Viper
-	SQLDB() *sql.DB
+	SQLDB() *sqlx.DB
 }
 
 type infraCtx struct {
@@ -59,10 +59,10 @@ func (c *infraCtx) Config() *viper.Viper {
 
 var (
 	sqlDBOnce sync.Once
-	sqlDB     *sql.DB
+	sqlDB     *sqlx.DB
 )
 
-func (c *infraCtx) SQLDB() *sql.DB {
+func (c *infraCtx) SQLDB() *sqlx.DB {
 	sqlDBOnce.Do(func() {
 		pgConfig := c.Config().Sub("postgres")
 		conCfg := pgx.ConnConfig{
@@ -99,7 +99,8 @@ func (c *infraCtx) SQLDB() *sql.DB {
 		db.SetMaxIdleConns(pgConfig.GetInt("con_max_idle"))
 		db.SetMaxOpenConns(pgConfig.GetInt("con_max_open"))
 
-		sqlDB = db
+		dbx := sqlx.NewDb(db, "postgres")
+		sqlDB = dbx
 	})
 	return sqlDB
 }

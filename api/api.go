@@ -54,6 +54,8 @@ func (c *server) endpoint() {
 			an.With(token.RequireAccountToken()).Group(func(an chi.Router) {
 				an.With(token.RequireAccountType("FREE")).Post("/upgrade", accountHandler.UpgradeAccount)
 			})
+			an.With(token.RequireAccountToken()).Get("/list", accountHandler.GetListAccountNewMatchPagination)
+
 		})
 	})
 

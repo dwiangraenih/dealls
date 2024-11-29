@@ -15,4 +15,8 @@ var (
 	RepoFindOneAccountByAccountMaskID = `
 	SELECT id, account_mask_id, type, name, user_name, password, created_at, created_by, updated_at, updated_by
 		FROM account where account_mask_id = $1;`
+
+	RepoGetListAccountNewMatchPagination = `
+	SELECT id, account_mask_id, type, name, user_name, created_at, created_by, updated_at, updated_by
+		FROM account %s %s %s;`
 )

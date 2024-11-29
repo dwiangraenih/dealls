@@ -17,3 +17,28 @@ type AccountBaseModel struct {
 	UpdatedAt     time.Time      `db:"updated_at"`
 	UpdatedBy     sql.NullString `db:"updated_by"`
 }
+
+type PaginationRequest struct {
+	Keywords      string `json:"q"`
+	Cursor        string `json:"cursor"`
+	Direction     string `json:"direction" valid:"optional,in(next|prev)"`
+	Limit         int    `json:"limit" valid:"required"`
+	CursorID      int64  `json:"-"`
+	AccountMaskID string `json:"-"`
+}
+
+type AccountResponse struct {
+	AccountMaskID string `json:"account_mask_id"`
+	Type          string `json:"type"`
+	Name          string `json:"name"`
+	UserName      string `json:"user_name"`
+}
+
+type ListAccountPagination struct {
+	Data       []AccountResponse `json:"data"`
+	LoadMore   bool              `json:"load_more"`
+	NextCursor string            `json:"next_cursor"`
+	PrevCursor string            `json:"prev_cursor"`
+	Limit      int               `json:"limit"`
+	Keywords   string            `json:"q"`
+}
