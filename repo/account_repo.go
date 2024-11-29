@@ -2,16 +2,18 @@ package repo
 
 import (
 	"context"
-	"database/sql"
+	"fmt"
 	"github.com/dwiangraeni/dealls/interfaces"
 	"github.com/dwiangraeni/dealls/model"
+	"github.com/dwiangraeni/dealls/utils"
+	"github.com/jmoiron/sqlx"
 )
 
 type user struct {
-	db *sql.DB
+	db *sqlx.DB
 }
 
-func NewAccountRepo(db *sql.DB) interfaces.IAccountRepo {
+func NewAccountRepo(db *sqlx.DB) interfaces.IAccountRepo {
 	return &user{db: db}
 }
 
@@ -47,4 +49,39 @@ func (u *user) FindOneAccountByAccountMaskID(ctx context.Context, accountMaskID 
 		return output, err
 	}
 	return output, err
+}
+
+func (u *user) GetListAccountNewMatchPagination(ctx context.Context, req model.PaginationRequest) (output []model.AccountBaseModel, err error) {
+	var (
+		condition, offsetLimit, orderBy string
+		inputArgs                       []interface{}
+		resp                            []model.AccountBaseModel
+	)
+
+	orderBy = `ORDER BY id DESC`
+	// Set condition
+	condition += `WHERE account_mask_id != ? `
+	inputArgs = append(inputArgs, req.AccountMaskID)
+
+	if req.CursorID != 0 && req.Direction == utils.DirectionNext {
+		condition += `AND id < ? `
+		inputArgs = append(inputArgs, req.CursorID)
+	}
+
+	if req.CursorID != 0 && req.Direction == utils.DirectionPrev {
+		condition += `AND id > ? `
+		inputArgs = append(inputArgs, req.CursorID)
+		orderBy = `ORDER BY id ASC`
+	}
+
+	if req.Limit != 0 {
+		offsetLimit = fmt.Sprintf("LIMIT %d", req.Limit)
+	}
+
+	query := fmt.Sprintf(RepoGetListAccountNewMatchPagination, condition, orderBy, offsetLimit)
+	if err = u.db.SelectContext(ctx, &resp, u.db.Rebind(query), inputArgs...); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }

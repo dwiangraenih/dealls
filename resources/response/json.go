@@ -6,16 +6,21 @@ import (
 )
 
 type ResponseWrapper struct {
-	Data    interface{} `json:"data"`
-	Message string      `json:"message"`
-	Success bool        `json:"success"`
+	Data     interface{} `json:"data"`
+	Message  string      `json:"message"`
+	Success  bool        `json:"success"`
+	MetaData interface{} `json:"_metadata,omitempty"`
 }
 
-func HandleSuccess(resp http.ResponseWriter, data interface{}) {
+func HandleSuccess(resp http.ResponseWriter, data interface{}, metaData ...map[string]interface{}) {
 	returnData := ResponseWrapper{
-		Data:    data,
 		Message: "Success",
 		Success: true,
+		Data:    data,
+	}
+
+	if metaData != nil {
+		returnData.MetaData = metaData
 	}
 
 	jsonData, err := json.Marshal(returnData)
