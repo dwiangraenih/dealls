@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"errors"
 	"github.com/asaskevich/govalidator"
 	"github.com/dwiangraeni/dealls/interfaces"
 	"github.com/dwiangraeni/dealls/model"
@@ -36,20 +35,20 @@ func (s *serviceAccountCtx) UpgradeAccount(ctx context.Context, accountMaskID st
 	account, err := s.accountRepo.FindOneAccountByAccountMaskID(ctx, accountMaskID)
 	if err != nil {
 		log.Printf("%s: failed to find account by account mask with err: %s", logFields, err.Error())
-		return "", errors.New("account not found")
+		return "", utils.ErrDataNotFound
 	}
 
 	account.Type = model.AccountTypePremium
 	_, err = s.accountRepo.UpdateAccountType(ctx, account)
 	if err != nil {
 		log.Printf("%s: failed to upgrade account with err: %s", logFields, err.Error())
-		return "", errors.New("failed to upgrade account")
+		return "", utils.ErrInternal
 	}
 
 	newToken, err := s.authService.RefreshToken(ctx, account)
 	if err != nil {
 		log.Printf("%s: failed to refresh token with err: %s", logFields, err.Error())
-		return "", errors.New("failed to refresh token")
+		return "", utils.ErrInternal
 	}
 
 	// Return the new token
@@ -87,7 +86,7 @@ func (s *serviceAccountCtx) GetListAccountNewMatchPagination(ctx context.Context
 	accounts, err := s.accountRepo.GetListAccountNewMatchPagination(ctx, req)
 	if err != nil {
 		log.Printf("%s: failed to get list account with err: %s", logFields, err.Error())
-		return resp, errors.New("failed to get list account")
+		return resp, utils.ErrInternal
 	}
 
 	if accounts == nil {

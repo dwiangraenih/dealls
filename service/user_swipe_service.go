@@ -7,6 +7,7 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/dwiangraeni/dealls/interfaces"
 	"github.com/dwiangraeni/dealls/model"
+	"github.com/dwiangraeni/dealls/utils"
 	"log"
 )
 
@@ -40,7 +41,7 @@ func (u *userSwipeLogCtx) ProcessUserSwipe(ctx context.Context, req model.UserSw
 	swipeCount, err := u.userSwipeLogRepo.GetSwipeCountByAccountID(ctx, req.SwiperAccountMaskID)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		log.Printf("%s: error get swipe count by account mask id: %v", logFields, err)
-		return err
+		return utils.ErrInternal
 	}
 
 	if swipeCount.TotalSwipeADay >= 10 {
@@ -52,14 +53,14 @@ func (u *userSwipeLogCtx) ProcessUserSwipe(ctx context.Context, req model.UserSw
 	swiperAccount, err := u.accountRepo.FindOneAccountByAccountMaskID(ctx, req.SwiperAccountMaskID)
 	if err != nil {
 		log.Printf("%s: error get account by account mask id: %v", logFields, err)
-		return err
+		return utils.ErrInternal
 	}
 
 	// get account by account mask id
 	swipeeAccount, err := u.accountRepo.FindOneAccountByAccountMaskID(ctx, req.SwipeeAccountMaskID)
 	if err != nil {
 		log.Printf("%s: error get account by account mask id: %v", logFields, err)
-		return err
+		return utils.ErrInternal
 	}
 
 	// insert user swipe log
@@ -71,7 +72,7 @@ func (u *userSwipeLogCtx) ProcessUserSwipe(ctx context.Context, req model.UserSw
 
 	if _, err = u.userSwipeLogRepo.InsertUserSwipeLog(ctx, userSwipeLog); err != nil {
 		log.Printf("%s: error insert user swipe log: %v", logFields, err)
-		return err
+		return utils.ErrInternal
 	}
 
 	return nil

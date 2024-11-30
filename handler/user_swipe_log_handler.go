@@ -2,10 +2,12 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/dwiangraeni/dealls/interfaces"
 	"github.com/dwiangraeni/dealls/middleware"
 	"github.com/dwiangraeni/dealls/model"
 	"github.com/dwiangraeni/dealls/resources/response"
+	"github.com/dwiangraeni/dealls/utils"
 	"net/http"
 )
 
@@ -37,6 +39,11 @@ func (u *userSwipeLogHandler) ProcessUserSwipe(w http.ResponseWriter, r *http.Re
 
 	req.SwiperAccountMaskID = claim.AccountMaskID
 	if err := u.userSwipeLogService.ProcessUserSwipe(r.Context(), req); err != nil {
+		if !errors.Is(err, utils.ErrInternal) {
+			response.HandleError(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
 		response.HandleError(w, http.StatusInternalServerError, err.Error())
 		return
 	}

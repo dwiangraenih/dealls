@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"github.com/dwiangraeni/dealls/interfaces"
 	"github.com/dwiangraeni/dealls/middleware"
 	"github.com/dwiangraeni/dealls/model"
@@ -35,6 +36,11 @@ func (a *accountHandler) UpgradeAccount(w http.ResponseWriter, r *http.Request) 
 
 	data, err := a.accountService.UpgradeAccount(r.Context(), claim.AccountMaskID)
 	if err != nil {
+		if !errors.Is(err, utils.ErrInternal) {
+			response.HandleError(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
 		response.HandleError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -68,6 +74,12 @@ func (a *accountHandler) GetListAccountNewMatchPagination(w http.ResponseWriter,
 
 	data, err := a.accountService.GetListAccountNewMatchPagination(r.Context(), req)
 	if err != nil {
+
+		if !errors.Is(err, utils.ErrInternal) {
+			response.HandleError(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
 		response.HandleError(w, http.StatusInternalServerError, err.Error())
 		return
 	}

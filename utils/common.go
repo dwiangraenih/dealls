@@ -1,5 +1,7 @@
 package utils
 
+import "errors"
+
 const (
 	DirectionNext = "next"
 	DirectionPrev = "prev"
@@ -9,6 +11,14 @@ const (
 
 	DefaultPage  = 1
 	DefaultLimit = 10
+)
+
+var (
+	ErrBadRequest       = errors.New("bad request")
+	ErrInternal         = errors.New("error internal")
+	ErrInvalidParameter = errors.New("invalid parameters, please check your input")
+	ErrDuplicateData    = errors.New("duplicate data")
+	ErrDataNotFound     = errors.New("data not found")
 )
 
 func GetPaginationCursor(dataCursor []int, isPrevCursor bool) (prevCursor, nextCursor int64) {

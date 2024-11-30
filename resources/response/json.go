@@ -38,6 +38,7 @@ func HandleError(resp http.ResponseWriter, status int, msg string) {
 		Success: false,
 		Message: msg,
 	}
+
 	resp.Header().Set("Content-Type", "application/json")
 	resp.WriteHeader(status)
 

@@ -9,6 +9,7 @@ import (
 	"github.com/dwiangraeni/dealls/resources/response"
 	"github.com/dwiangraeni/dealls/utils"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -41,7 +42,8 @@ func (s *serviceAuthCtx) Login(ctx context.Context, form request.LoginRequest) (
 	if isValid {
 		token, err := utils.GenerateToken(data, s.privateKey)
 		if err != nil {
-			return nil, err
+			log.Println("error when generate token: ", err)
+			return nil, utils.ErrInternal
 		}
 		return &response.LoginResponse{Token: token}, err
 	}
@@ -51,7 +53,8 @@ func (s *serviceAuthCtx) Login(ctx context.Context, form request.LoginRequest) (
 func (s *serviceAuthCtx) Register(ctx context.Context, form request.RegisterRequest) (*response.RegisterResponse, error) {
 	hash, err := utils.GeneratePassword(form.Password)
 	if err != nil {
-		return nil, err
+		log.Println("error when generate password: ", err)
+		return nil, utils.ErrInternal
 	}
 
 	data := model.AccountBaseModel{
@@ -66,7 +69,11 @@ func (s *serviceAuthCtx) Register(ctx context.Context, form request.RegisterRequ
 
 	data, err = s.accountRepo.CreateAccount(ctx, data)
 	if err != nil {
-		return nil, err
+		log.Printf("error when create account: %v", err)
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+			return nil, utils.ErrDuplicateData
+		}
+		return nil, utils.ErrInternal
 	}
 
 	return &response.RegisterResponse{
@@ -84,8 +91,9 @@ func (s *serviceAuthCtx) Register(ctx context.Context, form request.RegisterRequ
 func (s *serviceAuthCtx) RefreshToken(ctx context.Context, data model.AccountBaseModel) (*response.LoginResponse, error) {
 	newToken, err := utils.GenerateToken(data, s.privateKey)
 	if err != nil {
+		log.Println("error when generate token: ", err)
 		return nil, err
 	}
-	
+
 	return &response.LoginResponse{Token: newToken}, nil
 }
