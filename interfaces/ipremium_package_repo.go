@@ -14,4 +14,5 @@ type IPremiumPackageRepo interface {
 	GetPremiumPackageUserByAccountID(ctx context.Context, accountID int64) (output []model.PremiumPackageUserBaseModel, err error)
 	InsertPremiumPackageUser(ctx context.Context, trx *sql.Tx, req *model.PremiumPackageUserBaseModel) (err error)
 	GetPremiumPackageByPackageUID(ctx context.Context, packageUID string) (output model.PremiumPackageBaseModel, err error)
+	GetPremiumPackageUserByTitleAndAccountID(ctx context.Context, title string, accountID int64) (output model.PremiumPackageUserBaseModel, err error)
 }
