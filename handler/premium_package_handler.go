@@ -26,7 +26,7 @@ func (p *premiumPackageHandler) GetListPremiumPackagePagination(w http.ResponseW
 	req.Cursor = r.URL.Query().Get("cursor")
 	req.Direction = r.URL.Query().Get("direction")
 
-	if req.Limit == 0 || req.Limit > utils.DefaultLimit {
+	if req.Limit == 0 || req.Limit > utils.DefaultMaxLimit {
 		req.Limit = utils.DefaultLimit
 	}
 

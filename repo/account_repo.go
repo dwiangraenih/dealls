@@ -37,7 +37,7 @@ func (u *user) InsertAccount(ctx context.Context, account model.AccountBaseModel
 }
 
 func (u *user) UpdateAccountType(ctx context.Context, trx *sql.Tx, account model.AccountBaseModel) (model.AccountBaseModel, error) {
-	if _, err := trx.ExecContext(ctx, RepoUpdateAccountType, account.Type, account.UpdatedBy, account.ID); err != nil {
+	if _, err := trx.ExecContext(ctx, RepoUpdateAccount, account.ID, account.Type, account.Name, account.UserName, account.UpdatedBy, account.IsVerified); err != nil {
 		return account, err
 	}
 	return account, nil
@@ -45,7 +45,7 @@ func (u *user) UpdateAccountType(ctx context.Context, trx *sql.Tx, account model
 
 func (u *user) FindOneAccountByAccountMaskID(ctx context.Context, accountMaskID string) (output model.AccountBaseModel, err error) {
 	if err = u.db.QueryRowContext(ctx, RepoFindOneAccountByAccountMaskID, accountMaskID).
-		Scan(&output.ID, &output.AccountMaskID, &output.Type, &output.Name, &output.UserName, &output.Password,
+		Scan(&output.ID, &output.AccountMaskID, &output.Type, &output.Name, &output.UserName, &output.IsVerified,
 			&output.CreatedAt, &output.CreatedBy, &output.UpdatedAt, &output.UpdatedBy); err != nil {
 		return output, err
 	}

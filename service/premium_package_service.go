@@ -180,12 +180,17 @@ func (s *servicePremiumPackageCtx) PremiumPackageCheckout(ctx context.Context, r
 
 	if account.Type == model.AccountTypeFree {
 		account.Type = model.AccountTypePremium
-		_, err = s.accountRepo.UpdateAccountType(ctx, tx, account)
-		if err != nil {
-			s.transactionRepo.RollbackTrx(ctx, tx)
-			log.Printf("%s: failed to upgrade account with err: %s", logFields, err.Error())
-			return utils.ErrInternal
-		}
+	}
+
+	if premiumPackage.Title == model.PremiumPackageVerified {
+		account.IsVerified = true
+	}
+
+	_, err = s.accountRepo.UpdateAccountType(ctx, tx, account)
+	if err != nil {
+		s.transactionRepo.RollbackTrx(ctx, tx)
+		log.Printf("%s: failed to upgrade account with err: %s", logFields, err.Error())
+		return utils.ErrInternal
 	}
 
 	// commit transaction
