@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"github.com/dwiangraeni/dealls/interfaces"
 	"github.com/dwiangraeni/dealls/model"
@@ -26,7 +27,7 @@ func (u *user) FindOneAccountByAccountUserName(ctx context.Context, userName str
 	return output, err
 }
 
-func (u *user) CreateAccount(ctx context.Context, account model.AccountBaseModel) (model.AccountBaseModel, error) {
+func (u *user) InsertAccount(ctx context.Context, account model.AccountBaseModel) (model.AccountBaseModel, error) {
 	if err := u.db.QueryRowContext(ctx, RepoInsertAccount, account.Type, account.Name, account.UserName,
 		account.Password, account.CreatedBy).Scan(&account.ID, &account.AccountMaskID); err != nil {
 		return account, err
@@ -35,8 +36,8 @@ func (u *user) CreateAccount(ctx context.Context, account model.AccountBaseModel
 	return account, nil
 }
 
-func (u *user) UpdateAccountType(ctx context.Context, account model.AccountBaseModel) (model.AccountBaseModel, error) {
-	if _, err := u.db.ExecContext(ctx, RepoUpdateAccountType, account.Type, account.UpdatedBy, account.ID); err != nil {
+func (u *user) UpdateAccountType(ctx context.Context, trx *sql.Tx, account model.AccountBaseModel) (model.AccountBaseModel, error) {
+	if _, err := trx.ExecContext(ctx, RepoUpdateAccountType, account.Type, account.UpdatedBy, account.ID); err != nil {
 		return account, err
 	}
 	return account, nil

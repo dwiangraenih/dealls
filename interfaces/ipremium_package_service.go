@@ -7,4 +7,5 @@ import (
 
 type IPremiumPackageService interface {
 	GetListPremiumPackagePagination(ctx context.Context, req model.PaginationRequest) (output model.ListPackagePagination, err error)
+	PremiumPackageCheckout(ctx context.Context, req model.PremiumPackageCheckoutRequest) error
 }

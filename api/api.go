@@ -53,9 +53,6 @@ func (c *server) endpoint() {
 
 		// account
 		r.Route("/account", func(an chi.Router) {
-			an.With(token.RequireAccountToken()).Group(func(an chi.Router) {
-				an.With(token.RequireAccountType("FREE")).Post("/upgrade", accountHandler.UpgradeAccount)
-			})
 			an.With(token.RequireAccountToken()).Get("/list", accountHandler.GetListAccountNewMatchPagination)
 
 		})
@@ -68,6 +65,7 @@ func (c *server) endpoint() {
 		// premium package
 		r.Route("/premium-package", func(an chi.Router) {
 			an.With(token.RequireAccountToken()).Get("/list", premiumPackageHandler.GetListPremiumPackagePagination)
+			an.With(token.RequireAccountToken()).Post("/checkout", premiumPackageHandler.PremiumPackageCheckout)
 		})
 	})
 

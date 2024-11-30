@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"github.com/dwiangraeni/dealls/interfaces"
 	"github.com/dwiangraeni/dealls/model"
@@ -53,6 +54,22 @@ func (p *premiumPackageRepo) GetListPremiumPackagePagination(ctx context.Context
 
 func (p *premiumPackageRepo) GetPremiumPackageUserByAccountID(ctx context.Context, accountID int64) (output []model.PremiumPackageUserBaseModel, err error) {
 	if err = p.db.SelectContext(ctx, &output, RepoGetPremiumPackageUserByAccountID, accountID); err != nil {
+		return output, err
+	}
+
+	return output, nil
+}
+
+func (p *premiumPackageRepo) InsertPremiumPackageUser(ctx context.Context, trx *sql.Tx, req *model.PremiumPackageUserBaseModel) (err error) {
+	if err = trx.QueryRowContext(ctx, InsertPremiumPackageUser, req.AccountID, req.PremiumPackageID).Scan(&req.ID, &req.PurchasedDate); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *premiumPackageRepo) GetPremiumPackageByPackageUID(ctx context.Context, packageUID string) (output model.PremiumPackageBaseModel, err error) {
+	if err = p.db.GetContext(ctx, &output, RepoGetPremiumPackageByPackageUID, packageUID); err != nil {
 		return output, err
 	}
 
