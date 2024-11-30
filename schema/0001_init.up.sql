@@ -148,7 +148,7 @@ CREATE TABLE "premium_package_user"
     "id"                 SERIAL    NOT NULL,
     "premium_package_id" int       NOT NULL,
     "account_id"         int       NOT NULL,
-    "purchase_date"      timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
+    "purchased_date"      timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
 );
 
 ALTER TABLE "premium_package_user"

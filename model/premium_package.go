@@ -22,7 +22,7 @@ type PremiumPackageUserBaseModel struct {
 	ID               int64     `db:"id"`
 	PremiumPackageID int64     `db:"premium_package_id"`
 	AccountID        int64     `db:"account_id"`
-	PurchaseDate     time.Time `db:"purchase_date"`
+	PurchasedDate    time.Time `db:"purchased_date"`
 }
 
 type PremiumPackageResponse struct {

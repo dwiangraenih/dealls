@@ -11,6 +11,7 @@ type RepoManager interface {
 	AccountRepoManager() interfaces.IAccountRepo
 	UserSwipeLogRepoManager() interfaces.IUserSwipeLogRepo
 	PremiumPackageRepoManager() interfaces.IPremiumPackageRepo
+	TransactionRepoManager() interfaces.ITransactionRepo
 }
 
 type repoManager struct {
@@ -60,4 +61,17 @@ func (r *repoManager) PremiumPackageRepoManager() interfaces.IPremiumPackageRepo
 	})
 
 	return premiumPackageRepo
+}
+
+var (
+	transactionRepoOnce sync.Once
+	transactionRepo     interfaces.ITransactionRepo
+)
+
+func (r *repoManager) TransactionRepoManager() interfaces.ITransactionRepo {
+	transactionRepoOnce.Do(func() {
+		transactionRepo = repo.NewTransactionRepo(r.infra.SQLDB())
+	})
+
+	return transactionRepo
 }

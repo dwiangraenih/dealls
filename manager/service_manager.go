@@ -51,7 +51,7 @@ var (
 
 func (s *serviceManager) AccountService() interfaces.IAccountService {
 	accountServiceOnce.Do(func() {
-		accountService = service.NewAccountService(s.repo.AccountRepoManager(), s.AuthService())
+		accountService = service.NewAccountService(s.repo.AccountRepoManager())
 	})
 	return accountService
 }
@@ -89,7 +89,7 @@ var (
 
 func (s *serviceManager) PremiumPackageService() interfaces.IPremiumPackageService {
 	premiumPackageServiceOnce.Do(func() {
-		premiumPackageService = service.NewPremiumPackageService(s.repo.AccountRepoManager(), s.repo.PremiumPackageRepoManager())
+		premiumPackageService = service.NewPremiumPackageService(s.repo.AccountRepoManager(), s.repo.PremiumPackageRepoManager(), s.repo.TransactionRepoManager())
 	})
 	return premiumPackageService
 }

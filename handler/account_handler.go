@@ -21,33 +21,6 @@ func NewAccountHandler(accountService interfaces.IAccountService) *accountHandle
 	}
 }
 
-func (a *accountHandler) UpgradeAccount(w http.ResponseWriter, r *http.Request) {
-	tok := r.Context().Value("token")
-	if tok == nil {
-		response.HandleError(w, http.StatusUnauthorized, "unauthorized")
-		return
-	}
-
-	claim, ok := tok.(*middleware.AccessTokenClaim)
-	if !ok {
-		response.HandleError(w, http.StatusUnauthorized, "unauthorized")
-		return
-	}
-
-	data, err := a.accountService.UpgradeAccount(r.Context(), claim.AccountMaskID)
-	if err != nil {
-		if !errors.Is(err, utils.ErrInternal) {
-			response.HandleError(w, http.StatusBadRequest, err.Error())
-			return
-		}
-
-		response.HandleError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	response.HandleSuccess(w, data)
-}
-
 func (a *accountHandler) GetListAccountNewMatchPagination(w http.ResponseWriter, r *http.Request) {
 	var req model.PaginationRequest
 	req.Limit, _ = strconv.Atoi(r.URL.Query().Get("limit"))

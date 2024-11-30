@@ -67,7 +67,7 @@ func (s *serviceAuthCtx) Register(ctx context.Context, form request.RegisterRequ
 		UpdatedAt: time.Now().UTC(),
 	}
 
-	data, err = s.accountRepo.CreateAccount(ctx, data)
+	data, err = s.accountRepo.InsertAccount(ctx, data)
 	if err != nil {
 		log.Printf("error when create account: %v", err)
 		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {

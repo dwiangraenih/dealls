@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/dwiangraeni/dealls/interfaces"
 	"github.com/dwiangraeni/dealls/middleware"
@@ -60,4 +61,39 @@ func (p *premiumPackageHandler) GetListPremiumPackagePagination(w http.ResponseW
 		"limit":       data.Limit,
 		"q":           req.Keywords,
 	})
+}
+
+func (p *premiumPackageHandler) PremiumPackageCheckout(w http.ResponseWriter, r *http.Request) {
+	var req model.PremiumPackageCheckoutRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		response.HandleError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	tok := r.Context().Value("token")
+	if tok == nil {
+		response.HandleError(w, http.StatusUnauthorized, "unauthorized")
+		return
+	}
+
+	claim, ok := tok.(*middleware.AccessTokenClaim)
+	if !ok {
+		response.HandleError(w, http.StatusUnauthorized, "unauthorized")
+		return
+	}
+	req.AccountMaskID = claim.AccountMaskID
+
+	err = p.premiumPackageService.PremiumPackageCheckout(r.Context(), req)
+	if err != nil {
+		if !errors.Is(err, utils.ErrInternal) {
+			response.HandleError(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		response.HandleError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response.HandleSuccess(w, nil)
 }
