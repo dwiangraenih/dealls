@@ -10,5 +10,5 @@ var (
 	RepoGetSwipeCountByAccountMaskID = `
 	SELECT account_id, total_swipe_a_day, total_swipe
 		FROM swipe_count INNER JOIN account ON account.id = swipe_count.account_id
-		WHERE account.account_mask_id = $1;`
+		WHERE account.account_mask_id = $1 AND DATE(last_updated_at) = (CURRENT_TIMESTAMP)::DATE;`
 )

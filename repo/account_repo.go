@@ -60,8 +60,10 @@ func (u *user) GetListAccountNewMatchPagination(ctx context.Context, req model.P
 
 	orderBy = `ORDER BY id DESC`
 	// Set condition
-	condition += `WHERE account_mask_id != ? `
-	inputArgs = append(inputArgs, req.AccountMaskID)
+	if req.AccountMaskID != "" {
+		condition += `AND account_mask_id != ? `
+		inputArgs = append(inputArgs, req.AccountMaskID)
+	}
 
 	if req.CursorID != 0 && req.Direction == utils.DirectionNext {
 		condition += `AND id < ? `
