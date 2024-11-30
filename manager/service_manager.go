@@ -5,6 +5,7 @@ import (
 	"github.com/dwiangraeni/dealls/interfaces"
 	"github.com/dwiangraeni/dealls/middleware"
 	"github.com/dwiangraeni/dealls/service"
+	"github.com/dwiangraeni/dealls/utils"
 	"sync"
 )
 
@@ -39,7 +40,8 @@ func (s *serviceManager) AuthService() interfaces.IAuthService {
 		authService = service.NewAuthService(
 			s.repo.AccountRepoManager(),
 			key.GetString("public_key"),
-			key.GetString("private_key"))
+			key.GetString("private_key"),
+			utils.NewBcryptPasswordHasher())
 	})
 	return authService
 }

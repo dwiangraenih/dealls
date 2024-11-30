@@ -58,10 +58,10 @@ func (s *servicePremiumPackageCtx) GetListPremiumPackagePagination(ctx context.C
 	packageList, err := s.premiumPackageRepo.GetListPremiumPackagePagination(ctx, req)
 	if err != nil {
 		log.Printf("%s: error get list premium package: %v", logFields, err)
-		return resp, err
+		return resp, utils.ErrInternal
 	}
 
-	if packageList == nil {
+	if len(packageList) == 0 {
 		return resp, nil
 	}
 
@@ -97,6 +97,7 @@ func (s *servicePremiumPackageCtx) GetListPremiumPackagePagination(ctx context.C
 			PackageUID:  v.PackageUID,
 			Title:       v.Title,
 			Price:       v.Price,
+			Description: v.Description,
 			IsActive:    v.IsActive,
 			CreatedAt:   v.CreatedAt,
 			UpdatedAt:   v.UpdatedAt.Time,
@@ -134,6 +135,11 @@ func (s *servicePremiumPackageCtx) PremiumPackageCheckout(ctx context.Context, r
 			"req":    req,
 		}
 	)
+
+	if _, err := govalidator.ValidateStruct(req); err != nil {
+		log.Printf("%s: error validate request: %v", logFields, err)
+		return err
+	}
 
 	account, err := s.accountRepo.FindOneAccountByAccountMaskID(ctx, req.AccountMaskID)
 	if err != nil {

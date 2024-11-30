@@ -46,6 +46,6 @@ type ListAccountPagination struct {
 }
 
 type PremiumPackageCheckoutRequest struct {
-	AccountMaskID string `json:"-"`
+	AccountMaskID string `json:"-" valid:"required"`
 	PackageUID    string `json:"package_uid" valid:"required"`
 }
