@@ -17,17 +17,20 @@ type serviceAuthCtx struct {
 	accountRepo interfaces.IAccountRepo
 	publicKey   string
 	privateKey  string
+	utilsPass   utils.PasswordHasher
 }
 
 func NewAuthService(
 	accountRepo interfaces.IAccountRepo,
 	publicKey string,
 	privateKey string,
+	utilsPass utils.PasswordHasher,
 ) interfaces.IAuthService {
 	return &serviceAuthCtx{
 		accountRepo: accountRepo,
 		publicKey:   publicKey,
 		privateKey:  privateKey,
+		utilsPass:   utilsPass,
 	}
 }
 
@@ -38,9 +41,9 @@ func (s *serviceAuthCtx) Login(ctx context.Context, form request.LoginRequest) (
 		return nil, errors.New(`invalid login`)
 	}
 
-	isValid := utils.CheckPasswordHash(form.Password, data.Password)
+	isValid := s.utilsPass.CheckPasswordHash(form.Password, data.Password)
 	if isValid {
-		token, err := utils.GenerateToken(data, s.privateKey)
+		token, err := s.utilsPass.GenerateToken(data, s.privateKey)
 		if err != nil {
 			log.Println("error when generate token: ", err)
 			return nil, utils.ErrInternal
@@ -51,7 +54,7 @@ func (s *serviceAuthCtx) Login(ctx context.Context, form request.LoginRequest) (
 }
 
 func (s *serviceAuthCtx) Register(ctx context.Context, form request.RegisterRequest) (*response.RegisterResponse, error) {
-	hash, err := utils.GeneratePassword(form.Password)
+	hash, err := s.utilsPass.GeneratePassword(form.Password)
 	if err != nil {
 		log.Println("error when generate password: ", err)
 		return nil, utils.ErrInternal
@@ -86,14 +89,4 @@ func (s *serviceAuthCtx) Register(ctx context.Context, form request.RegisterRequ
 		UpdatedAt:     data.UpdatedAt.String(),
 		UpdatedBy:     data.UpdatedBy.String,
 	}, nil
-}
-
-func (s *serviceAuthCtx) RefreshToken(ctx context.Context, data model.AccountBaseModel) (*response.LoginResponse, error) {
-	newToken, err := utils.GenerateToken(data, s.privateKey)
-	if err != nil {
-		log.Println("error when generate token: ", err)
-		return nil, err
-	}
-
-	return &response.LoginResponse{Token: newToken}, nil
 }

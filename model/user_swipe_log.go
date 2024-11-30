@@ -16,8 +16,8 @@ type UserSwipeRequest struct {
 }
 
 type SwipeCountBaseModel struct {
-	ID             string `db:"id"`
-	AccountID      string `db:"account_id"`
-	TotalSwipeADay int    `db:"total_swipe_a_day"`
-	TotalSwipe     int    `db:"total_swipe"`
+	ID             int64 `db:"id"`
+	AccountID      int64 `db:"account_id"`
+	TotalSwipeADay int   `db:"total_swipe_a_day"`
+	TotalSwipe     int   `db:"total_swipe"`
 }

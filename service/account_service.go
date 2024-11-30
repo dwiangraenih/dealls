@@ -52,7 +52,7 @@ func (s *serviceAccountCtx) GetListAccountNewMatchPagination(ctx context.Context
 		return resp, utils.ErrInternal
 	}
 
-	if accounts == nil {
+	if len(accounts) == 0 {
 		return resp, nil
 	}
 

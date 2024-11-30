@@ -28,6 +28,7 @@ type PremiumPackageUserBaseModel struct {
 type PremiumPackageResponse struct {
 	PackageUID  string    `json:"package_uid"`
 	Title       string    `json:"title"`
+	Description string    `json:"description"`
 	Price       float64   `json:"price"`
 	IsActive    bool      `json:"is_active"`
 	CreatedAt   time.Time `json:"created_at"`
