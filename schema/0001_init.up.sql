@@ -39,10 +39,11 @@ CREATE UNIQUE INDEX ON "account" USING BTREE ("user_name");
 -- create table swipe_count
 CREATE TABLE "swipe_count"
 (
-    "id"                SERIAL NOT NULL,
-    "account_id"        int    NOT NULL,
-    "total_swipe_a_day" int    NOT NULL,
-    "total_swipe"       int    NOT NULL
+    "id"                SERIAL    NOT NULL,
+    "account_id"        int       NOT NULL,
+    "total_swipe_a_day" int       NOT NULL,
+    "total_swipe"       int       NOT NULL,
+    "last_updated_at"   timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
 );
 
 -- create unique index on swipe_count
@@ -51,6 +52,25 @@ CREATE UNIQUE INDEX ON "swipe_count_account_id_unique" USING BTREE ("account_id"
 -- create foreign key
 ALTER TABLE "swipe_count"
     ADD FOREIGN KEY ("account_id") REFERENCES "account" ("id");
+
+-- create function to set timestamp
+CREATE
+OR REPLACE FUNCTION trigger_set_timestamp_last_update() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  NEW.last_updated_at
+= NOW();
+RETURN NEW;
+END;
+$$;
+
+-- CREATE TRIGGER updated_at
+CREATE TRIGGER set_timestamp_last_update
+    BEFORE UPDATE
+    ON swipe_count
+    FOR EACH ROW EXECUTE FUNCTION public.trigger_set_timestamp_last_update();
+
 
 -- create table user_swipe_log
 CREATE TABLE "user_swipe_log"
@@ -68,16 +88,18 @@ ALTER TABLE "user_swipe_log"
 ALTER TABLE "user_swipe_log"
     ADD CONSTRAINT "fk_user_swipe_log_swipee_id" FOREIGN KEY ("swipee_id") REFERENCES "account" ("id");
 
-
 -- func trigger for update swipe counter
-CREATE OR REPLACE FUNCTION update_swipe_count()
+CREATE
+OR REPLACE FUNCTION update_swipe_count()
 RETURNS TRIGGER AS $$
 DECLARE
 current_day_start DATE;
-    today_swipe_count INT;
+    today_swipe_count
+INT;
 BEGIN
     -- Define the start of the current day in UTC+7
-    current_day_start := (CURRENT_TIMESTAMP)::DATE;
+    current_day_start
+:= (CURRENT_TIMESTAMP)::DATE;
 
     -- Count today's swipes for the current swiper_id
 SELECT COUNT(*)
@@ -88,19 +110,21 @@ WHERE swiper_id = NEW.swiper_id
 
 -- Upsert the swipe count record
 INSERT INTO swipe_count (account_id, total_swipe_a_day, total_swipe)
-VALUES (NEW.swiper_id, today_swipe_count, 1)
-    ON CONFLICT (account_id)
-    DO UPDATE SET
+VALUES (NEW.swiper_id, today_swipe_count, 1) ON CONFLICT (account_id)
+    DO
+UPDATE SET
     total_swipe_a_day = today_swipe_count,
-               total_swipe = swipe_count.total_swipe + 1;
+    total_swipe = swipe_count.total_swipe + 1;
 
 
 RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$
+LANGUAGE plpgsql;
 
 -- Create the trigger
 CREATE TRIGGER trigger_update_swipe_count
-    AFTER INSERT ON user_swipe_log
+    AFTER INSERT
+    ON user_swipe_log
     FOR EACH ROW
     EXECUTE FUNCTION update_swipe_count();

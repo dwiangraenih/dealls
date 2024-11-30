@@ -10,9 +10,9 @@ type UserSwipeLogBaseModel struct {
 }
 
 type UserSwipeRequest struct {
-	SwiperAccountMaskID string `json:"-" validate:"required"`
-	SwipeeAccountMaskID string `json:"swipee_id" validate:"required"`
-	SwipeType           string `json:"swipe_type" validate:"required, in(LIKE, DISLIKE)"`
+	SwiperAccountMaskID string `json:"-" valid:"required"`
+	SwipeeAccountMaskID string `json:"swipee_id" valid:"required"`
+	SwipeType           string `json:"swipe_type" valid:"required,in(LIKE|PASS)"`
 }
 
 type SwipeCountBaseModel struct {

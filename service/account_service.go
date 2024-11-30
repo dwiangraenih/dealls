@@ -93,6 +93,11 @@ func (s *serviceAccountCtx) GetListAccountNewMatchPagination(ctx context.Context
 		return resp, nil
 	}
 
+	if len(accounts) > actualLimit {
+		loadMore = true
+		accounts = accounts[:actualLimit]
+	}
+
 	accountList := make([]model.AccountResponse, len(accounts))
 	dataCursor = make([]int, len(accounts))
 

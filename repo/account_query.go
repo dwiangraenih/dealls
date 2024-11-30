@@ -18,5 +18,7 @@ var (
 
 	RepoGetListAccountNewMatchPagination = `
 	SELECT id, account_mask_id, type, name, user_name, created_at, created_by, updated_at, updated_by
-		FROM account %s %s %s;`
+		FROM account WHERE id NOT IN (
+		SELECT swipee_id FROM user_swipe_log WHERE user_swipe_log.swipee_id=account.id AND DATE(created_at) = (CURRENT_TIMESTAMP)::DATE)
+	%s %s %s;`
 )
