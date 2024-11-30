@@ -42,6 +42,7 @@ func (c *server) endpoint() {
 	accountHandler := handler.NewAccountHandler(c.serviceManager.AccountService())
 	token := middleware.NewTokenValidator(c.serviceManager.AccountManager())
 	userSwipeLogHandler := handler.NewUserSwipeLogHandler(c.serviceManager.UserSwipeLogService())
+	premiumPackageHandler := handler.NewPremiumPackageHandler(c.serviceManager.PremiumPackageService())
 
 	c.router.Route("/dealls", func(r chi.Router) {
 		// auth
@@ -62,6 +63,11 @@ func (c *server) endpoint() {
 		// swipe
 		r.Route("/swipe", func(an chi.Router) {
 			an.With(token.RequireAccountToken()).Post("/interaction", userSwipeLogHandler.ProcessUserSwipe)
+		})
+
+		// premium package
+		r.Route("/premium-package", func(an chi.Router) {
+			an.With(token.RequireAccountToken()).Get("/list", premiumPackageHandler.GetListPremiumPackagePagination)
 		})
 	})
 
