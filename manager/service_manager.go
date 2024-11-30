@@ -77,7 +77,7 @@ var (
 
 func (s *serviceManager) UserSwipeLogService() interfaces.IUserSwipeLogService {
 	userSwipeLogServiceOnce.Do(func() {
-		userSwipeLogService = service.NewUserSwipeLogService(s.repo.UserSwipeLogRepoManager(), s.repo.AccountRepoManager())
+		userSwipeLogService = service.NewUserSwipeLogService(s.repo.UserSwipeLogRepoManager(), s.repo.AccountRepoManager(), s.repo.PremiumPackageRepoManager())
 	})
 	return userSwipeLogService
 }

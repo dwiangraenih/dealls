@@ -12,13 +12,17 @@ import (
 )
 
 type userSwipeLogCtx struct {
-	userSwipeLogRepo interfaces.IUserSwipeLogRepo
-	accountRepo      interfaces.IAccountRepo
+	userSwipeLogRepo   interfaces.IUserSwipeLogRepo
+	accountRepo        interfaces.IAccountRepo
+	premiumPackageRepo interfaces.IPremiumPackageRepo
 }
 
-func NewUserSwipeLogService(userSwipeLogRepo interfaces.IUserSwipeLogRepo, accountRepo interfaces.IAccountRepo) interfaces.IUserSwipeLogService {
+func NewUserSwipeLogService(userSwipeLogRepo interfaces.IUserSwipeLogRepo,
+	accountRepo interfaces.IAccountRepo,
+	premiumPackageRepo interfaces.IPremiumPackageRepo) interfaces.IUserSwipeLogService {
 	return &userSwipeLogCtx{userSwipeLogRepo: userSwipeLogRepo,
-		accountRepo: accountRepo}
+		accountRepo:        accountRepo,
+		premiumPackageRepo: premiumPackageRepo}
 }
 
 func (u *userSwipeLogCtx) ProcessUserSwipe(ctx context.Context, req model.UserSwipeRequest) error {
@@ -44,16 +48,23 @@ func (u *userSwipeLogCtx) ProcessUserSwipe(ctx context.Context, req model.UserSw
 		return utils.ErrInternal
 	}
 
-	if swipeCount.TotalSwipeADay >= 10 {
-		log.Printf("%s: total swipe a day is already reach the limit", logFields)
-		return errors.New("total swipe a day is already reach the limit, upgrade your account to get more swipe")
-	}
-
 	// get account by account mask id
 	swiperAccount, err := u.accountRepo.FindOneAccountByAccountMaskID(ctx, req.SwiperAccountMaskID)
 	if err != nil {
 		log.Printf("%s: error get account by account mask id: %v", logFields, err)
 		return utils.ErrInternal
+	}
+
+	// get premium package user swipe limit
+	premiumPackageUser, err := u.premiumPackageRepo.GetPremiumPackageUserByTitleAndAccountID(ctx, model.PremiumPackageSwipe, swiperAccount.ID)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		log.Printf("%s: error get premium package user by account id: %v", logFields, err)
+		return utils.ErrInternal
+	}
+
+	if swipeCount.TotalSwipeADay >= 10 && premiumPackageUser.ID == 0 {
+		log.Printf("%s: total swipe a day is already reach the limit", logFields)
+		return errors.New("total swipe a day is already reach the limit, upgrade your account to get more swipe")
 	}
 
 	// get account by account mask id

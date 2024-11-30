@@ -61,7 +61,7 @@ func (p *premiumPackageRepo) GetPremiumPackageUserByAccountID(ctx context.Contex
 }
 
 func (p *premiumPackageRepo) InsertPremiumPackageUser(ctx context.Context, trx *sql.Tx, req *model.PremiumPackageUserBaseModel) (err error) {
-	if err = trx.QueryRowContext(ctx, InsertPremiumPackageUser, req.AccountID, req.PremiumPackageID).Scan(&req.ID, &req.PurchasedDate); err != nil {
+	if err = trx.QueryRowContext(ctx, RepoInsertPremiumPackageUser, req.PremiumPackageID, req.AccountID).Scan(&req.ID, &req.PurchasedDate); err != nil {
 		return err
 	}
 
@@ -70,6 +70,14 @@ func (p *premiumPackageRepo) InsertPremiumPackageUser(ctx context.Context, trx *
 
 func (p *premiumPackageRepo) GetPremiumPackageByPackageUID(ctx context.Context, packageUID string) (output model.PremiumPackageBaseModel, err error) {
 	if err = p.db.GetContext(ctx, &output, RepoGetPremiumPackageByPackageUID, packageUID); err != nil {
+		return output, err
+	}
+
+	return output, nil
+}
+
+func (p *premiumPackageRepo) GetPremiumPackageUserByTitleAndAccountID(ctx context.Context, title string, accountID int64) (output model.PremiumPackageUserBaseModel, err error) {
+	if err = p.db.GetContext(ctx, &output, RepoGetPremiumPackageUserByTitleAndAccountID, title, accountID); err != nil {
 		return output, err
 	}
 
