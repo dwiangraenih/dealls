@@ -13,6 +13,7 @@ type ServiceManager interface {
 	AccountService() interfaces.IAccountService
 	AccountManager() middleware.AccountToken
 	UserSwipeLogService() interfaces.IUserSwipeLogService
+	PremiumPackageService() interfaces.IPremiumPackageService
 }
 
 type serviceManager struct {
@@ -79,4 +80,16 @@ func (s *serviceManager) UserSwipeLogService() interfaces.IUserSwipeLogService {
 		userSwipeLogService = service.NewUserSwipeLogService(s.repo.UserSwipeLogRepoManager(), s.repo.AccountRepoManager())
 	})
 	return userSwipeLogService
+}
+
+var (
+	premiumPackageServiceOnce sync.Once
+	premiumPackageService     interfaces.IPremiumPackageService
+)
+
+func (s *serviceManager) PremiumPackageService() interfaces.IPremiumPackageService {
+	premiumPackageServiceOnce.Do(func() {
+		premiumPackageService = service.NewPremiumPackageService(s.repo.AccountRepoManager(), s.repo.PremiumPackageRepoManager())
+	})
+	return premiumPackageService
 }

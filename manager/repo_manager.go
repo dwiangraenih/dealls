@@ -10,6 +10,7 @@ import (
 type RepoManager interface {
 	AccountRepoManager() interfaces.IAccountRepo
 	UserSwipeLogRepoManager() interfaces.IUserSwipeLogRepo
+	PremiumPackageRepoManager() interfaces.IPremiumPackageRepo
 }
 
 type repoManager struct {
@@ -46,4 +47,17 @@ func (r *repoManager) UserSwipeLogRepoManager() interfaces.IUserSwipeLogRepo {
 	})
 
 	return userSwipeLogRepo
+}
+
+var (
+	premiumPackageRepoOnce sync.Once
+	premiumPackageRepo     interfaces.IPremiumPackageRepo
+)
+
+func (r *repoManager) PremiumPackageRepoManager() interfaces.IPremiumPackageRepo {
+	premiumPackageRepoOnce.Do(func() {
+		premiumPackageRepo = repo.NewPremiumPackageRepo(r.infra.SQLDB())
+	})
+
+	return premiumPackageRepo
 }

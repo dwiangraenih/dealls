@@ -128,3 +128,32 @@ CREATE TRIGGER trigger_update_swipe_count
     ON user_swipe_log
     FOR EACH ROW
     EXECUTE FUNCTION update_swipe_count();
+
+CREATE TABLE "premium_package"
+(
+    "id"          SERIAL       NOT NULL,
+    "package_uid" uuid UNIQUE  NOT NULL DEFAULT (uuid_generate_v4()),
+    "title"       varchar      NOT NULL,
+    "description" text         NOT NULL,
+    "price"       float        NOT NULL,
+    "is_active"   bool         NOT NULL,
+    "created_at"  timestamp    NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+    "created_by"  varchar(225) NOT NULL,
+    "updated_at"  timestamp    NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+    "updated_by"  varchar(225)
+);
+
+CREATE TABLE "premium_package_user"
+(
+    "id"                 SERIAL    NOT NULL,
+    "premium_package_id" int       NOT NULL,
+    "account_id"         int       NOT NULL,
+    "purchase_date"      timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
+);
+
+ALTER TABLE "premium_package_user"
+    ADD CONSTRAINT "fk_premium_package_id" FOREIGN KEY ("premium_package_id") REFERENCES "premium_package" ("id");
+ALTER TABLE "premium_package_user"
+    ADD CONSTRAINT "fk_premium_package_user_account_id" FOREIGN KEY ("account_id") REFERENCES "account" ("id");
+
+CREATE UNIQUE INDEX IF NOT EXISTS premium_package_user_account_id_premium_package_id_unique_idx ON premium_package_user (premium_package_id,account_id);
