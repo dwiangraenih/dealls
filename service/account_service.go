@@ -72,6 +72,7 @@ func (s *serviceAccountCtx) GetListAccountNewMatchPagination(ctx context.Context
 			Type:          account.Type,
 			Name:          account.Name,
 			UserName:      account.UserName,
+			IsVerified:    account.IsVerified,
 		}
 	}
 

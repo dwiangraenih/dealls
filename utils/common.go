@@ -9,8 +9,8 @@ const (
 	ConstCursorHashSalt = "Curs0rH4shS4lt0rD342024"
 	ConstHashLength     = 10
 
-	DefaultPage  = 1
-	DefaultLimit = 10
+	DefaultLimit    = 10
+	DefaultMaxLimit = 100
 )
 
 var (

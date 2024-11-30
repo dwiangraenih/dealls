@@ -12,6 +12,7 @@ type AccountBaseModel struct {
 	Name          string         `db:"name"`
 	UserName      string         `db:"user_name"`
 	Password      string         `db:"password"`
+	IsVerified    bool           `db:"is_verified"`
 	CreatedAt     time.Time      `db:"created_at"`
 	CreatedBy     string         `db:"created_by"`
 	UpdatedAt     time.Time      `db:"updated_at"`
@@ -32,6 +33,7 @@ type AccountResponse struct {
 	Type          string `json:"type"`
 	Name          string `json:"name"`
 	UserName      string `json:"user_name"`
+	IsVerified    bool   `json:"is_verified"`
 }
 
 type ListAccountPagination struct {
