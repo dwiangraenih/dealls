@@ -2,9 +2,11 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/dwiangraeni/dealls/interfaces"
 	"github.com/dwiangraeni/dealls/resources/request"
 	"github.com/dwiangraeni/dealls/resources/response"
+	"github.com/dwiangraeni/dealls/utils"
 	"net/http"
 )
 
@@ -51,6 +53,16 @@ func (c *authHandler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 
 	data, err := c.authService.Register(r.Context(), req)
 	if err != nil {
+		if errors.Is(err, utils.ErrBadRequest) {
+			response.HandleError(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		if errors.Is(err, utils.ErrDuplicateData) {
+			response.HandleError(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
 		response.HandleError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
