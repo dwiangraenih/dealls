@@ -1,0 +1,29 @@
+run:
+  timeout: 5m # Maximum time to run linters
+
+linters:
+  enable:
+    - govet         # Reports suspicious constructs
+    - gofmt         # Enforces consistent Go formatting
+    - golint        # Checks coding style issues
+    - errcheck      # Detects unchecked errors
+    - staticcheck   # Advanced static analysis
+    - gocyclo       # Measures cyclomatic complexity
+    - unused        # Checks for unused variables, constants, etc.
+    - gosimple      # Suggests simplifications for Go code
+
+linters-settings:
+  gocyclo:
+    min-complexity: 10 # Minimum complexity threshold for reporting
+  errcheck:
+    # Exclude specific functions or packages from error checking
+    exclude:
+      - fmt.Println
+  gofmt:
+    simplify: true # Simplifies code as well as formatting
+
+issues:
+  exclude-use-default: false # Use the default exclusion list provided by golangci-lint
+  exclude:
+    - "error return value not checked.*" # Ignore unchecked error return values
+    - "variable .* is unused"           # Ignore warnings for unused variables
