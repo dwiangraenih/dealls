@@ -45,17 +45,38 @@ Ensure the following are installed on your machine:
 
 - Go (>= 1.20)
 - Git
+- Docker (for containerized deployment)
+- GolangCI-Lint (for linting and code quality checks)
 
 ---
 
 ## Running the Service
 
-- Clone [repository](https://github.com/dwiangraenih/dealls.git)
-- Install Dependecies `go mod tidy` and `go mod vendor`
-- Copy file `app.toml.dist` to be `app.toml`
-- Check pdf file for hidden key
-- Copy and run the schema file to your database
-- Run Project with `go run main.go api`
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/dwiangraenih/dealls.git
+   cd dealls
+   ```
+
+2. Install dependencies:
+   ```bash
+   go mod tidy
+   go mod vendor
+   ```
+
+3. Configure the application:
+    - Copy `app.toml.dist` to `app.toml`.
+    - Update `app.toml` with your database and secret configurations.
+
+4. Prepare the database:
+    - Copy and execute the schema file (`schema/0001_init.up.sql`) in your database.
+
+5. Run the project:
+   ```bash
+   go run main.go api
+   ```
+
+---
 
 ## Test Service
 Use the following command to test the service:
@@ -63,6 +84,8 @@ Use the following command to test the service:
 ```bash
 go test $(go list ./... | grep -v '/mocks$') -coverprofile=coverage.out
 ```
+
+---
 
 ## Update Mocks
 Use the following command to update mocks:
@@ -73,9 +96,52 @@ mockgen -source=your-source-code.go -destination=your-destination-code.go
 
 ---
 
+## Docker Setup
+
+### Building the Docker Image
+Build the Docker image for the service:
+```bash
+docker build -t dealls_dating_app .
+```
+
+### Running the Docker Container
+Run the service in a container:
+```bash
+docker run -p 8010:8010 dealls_dating_app
+```
+
+### Using Docker Compose
+If you have a `docker-compose.yml` file, use the following command to run the application along with its dependencies:
+```bash
+docker-compose up --build
+```
+
+---
+
+## GolangCI-Lint
+
+### Installing GolangCI-Lint
+Install GolangCI-Lint using Homebrew:
+```bash
+brew install golangci-lint
+```
+
+### Running GolangCI-Lint
+To lint the project and enforce coding standards:
+```bash
+golangci-lint run
+```
+
+### Fixing Issues
+To automatically fix issues detected by the linter:
+```bash
+golangci-lint run --fix
+```
+
 ## Notes
 
 - Ensure your Go version matches or exceeds the minimum required version (1.20).
 - Logs will provide detailed error messages in case of runtime issues.
+- Docker and GolangCI-Lint are recommended for maintaining a consistent development and deployment workflow.
 
 For further assistance, please contact the repository maintainer.
