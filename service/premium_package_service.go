@@ -70,15 +70,8 @@ func (s *servicePremiumPackageCtx) GetListPremiumPackagePagination(ctx context.C
 		packageList = packageList[:actualLimit]
 	}
 
-	// get accountID
-	account, err := s.accountRepo.FindOneAccountByAccountMaskID(ctx, req.AccountMaskID)
-	if err != nil {
-		log.Printf("%s: error get accountID: %v", logFields, err)
-		return resp, utils.ErrInternal
-	}
-
 	// get user premium package
-	userPremiumPackage, err := s.premiumPackageRepo.GetPremiumPackageUserByAccountID(ctx, account.ID)
+	userPremiumPackage, err := s.premiumPackageRepo.GetPremiumPackageUserByAccountMaskID(ctx, req.AccountMaskID)
 	if err != nil {
 		log.Printf("%s: error get user premium package: %v", logFields, err)
 		return resp, utils.ErrInternal

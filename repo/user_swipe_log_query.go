@@ -5,6 +5,11 @@ var (
 	RepoInsertUserSwipeLog = `
 	INSERT INTO user_swipe_log (swiper_id, swipee_id, swipe_type)
 		VALUES ($1, $2, $3) RETURNING id;`
+	RepoGetUserSwipeLogBySwiperIDAndSwpeeID = `
+	SELECT id, swiper_id, swipee_id, swipe_type, created_at
+		FROM user_swipe_log
+		WHERE swiper_id = $1 AND swipee_id = $2 AND DATE(created_at) = (CURRENT_TIMESTAMP)::DATE
+	LIMIT 1;`
 
 	// swipe_count
 	RepoGetSwipeCountByAccountMaskID = `

@@ -29,6 +29,7 @@ func Test_ProcessUserSwipe(t *testing.T) {
 		isMockFindOneAccountBySwiperAccountMaskID      bool
 		isMockGetPremiumPackageUserByTitleAndAccountID bool
 		isMockFindOneAccountBySwipeeAccountMaskID      bool
+		isMockGetUserSwipeLogBySwiperIDAndSwpeeID      bool
 		isMockInsertUserSwipeLog                       bool
 	}
 
@@ -47,6 +48,11 @@ func Test_ProcessUserSwipe(t *testing.T) {
 		err  error
 	}
 
+	type getUserSwipeLogBySwiperIDAndSwpeeIDResp struct {
+		resp model.UserSwipeLogBaseModel
+		err  error
+	}
+
 	type insertUserSwipeLogResp struct {
 		err error
 	}
@@ -62,6 +68,7 @@ func Test_ProcessUserSwipe(t *testing.T) {
 		findOneAccountByAccountSwiperMaskIDResp      findOneAccountByAccountMaskIDResp
 		getPremiumPackageUserByTitleAndAccountIDResp getPremiumPackageUserByTitleAndAccountIDResp
 		findOneAccountByAccountSwipeeMaskIDResp      findOneAccountByAccountMaskIDResp
+		getUserSwipeLogBySwiperIDAndSwpeeIDResp      getUserSwipeLogBySwiperIDAndSwpeeIDResp
 		insertUserSwipeLogResp                       insertUserSwipeLogResp
 	}
 
@@ -237,6 +244,99 @@ func Test_ProcessUserSwipe(t *testing.T) {
 			msgErr:  utils.ErrInternal,
 		},
 		{
+			name:    "error get user swipe log by swiper id and swipee id",
+			service: MockNewUserSwipeLogService(MockUserSwipeLogService{}),
+			args: args{
+				ctx: defCtx,
+				req: req,
+			},
+			mockScenario: mockScenario{
+				isMockEnable: isMockEnable{
+					isMockGetSwipeCountByAccountID:                 true,
+					isMockFindOneAccountBySwiperAccountMaskID:      true,
+					isMockGetPremiumPackageUserByTitleAndAccountID: true,
+					isMockFindOneAccountBySwipeeAccountMaskID:      true,
+					isMockGetUserSwipeLogBySwiperIDAndSwpeeID:      true,
+				},
+				getSwipeCountByAccountIDResp: getSwipeCountByAccountIDResp{
+					resp: model.SwipeCountBaseModel{
+						AccountID:      1,
+						TotalSwipeADay: 10,
+						TotalSwipe:     10,
+					},
+					err: nil,
+				},
+				findOneAccountByAccountSwiperMaskIDResp: findOneAccountByAccountMaskIDResp{
+					resp: model.AccountBaseModel{
+						ID: 1,
+					},
+				},
+				getPremiumPackageUserByTitleAndAccountIDResp: getPremiumPackageUserByTitleAndAccountIDResp{
+					resp: model.PremiumPackageUserBaseModel{
+						ID: 1,
+					},
+				},
+				findOneAccountByAccountSwipeeMaskIDResp: findOneAccountByAccountMaskIDResp{
+					resp: model.AccountBaseModel{
+						ID: 2,
+					},
+				},
+				getUserSwipeLogBySwiperIDAndSwpeeIDResp: getUserSwipeLogBySwiperIDAndSwpeeIDResp{
+					resp: model.UserSwipeLogBaseModel{},
+					err:  errors.New("error internal"),
+				},
+			},
+			wantErr: true,
+			msgErr:  utils.ErrInternal,
+		},
+		{
+			name:    "error user already swipe this user",
+			service: MockNewUserSwipeLogService(MockUserSwipeLogService{}),
+			args: args{
+				ctx: defCtx,
+				req: req,
+			},
+			mockScenario: mockScenario{
+				isMockEnable: isMockEnable{
+					isMockGetSwipeCountByAccountID:                 true,
+					isMockFindOneAccountBySwiperAccountMaskID:      true,
+					isMockGetPremiumPackageUserByTitleAndAccountID: true,
+					isMockFindOneAccountBySwipeeAccountMaskID:      true,
+					isMockGetUserSwipeLogBySwiperIDAndSwpeeID:      true,
+				},
+				getSwipeCountByAccountIDResp: getSwipeCountByAccountIDResp{
+					resp: model.SwipeCountBaseModel{
+						AccountID:      1,
+						TotalSwipeADay: 10,
+						TotalSwipe:     10,
+					},
+					err: nil,
+				},
+				findOneAccountByAccountSwiperMaskIDResp: findOneAccountByAccountMaskIDResp{
+					resp: model.AccountBaseModel{
+						ID: 1,
+					},
+				},
+				getPremiumPackageUserByTitleAndAccountIDResp: getPremiumPackageUserByTitleAndAccountIDResp{
+					resp: model.PremiumPackageUserBaseModel{
+						ID: 1,
+					},
+				},
+				findOneAccountByAccountSwipeeMaskIDResp: findOneAccountByAccountMaskIDResp{
+					resp: model.AccountBaseModel{
+						ID: 2,
+					},
+				},
+				getUserSwipeLogBySwiperIDAndSwpeeIDResp: getUserSwipeLogBySwiperIDAndSwpeeIDResp{
+					resp: model.UserSwipeLogBaseModel{
+						ID: 1,
+					},
+				},
+			},
+			wantErr: true,
+			msgErr:  errors.New("user already swipe this user"),
+		},
+		{
 			name:    "error insert user swipe log",
 			service: MockNewUserSwipeLogService(MockUserSwipeLogService{}),
 			args: args{
@@ -249,6 +349,7 @@ func Test_ProcessUserSwipe(t *testing.T) {
 					isMockFindOneAccountBySwiperAccountMaskID:      true,
 					isMockGetPremiumPackageUserByTitleAndAccountID: true,
 					isMockFindOneAccountBySwipeeAccountMaskID:      true,
+					isMockGetUserSwipeLogBySwiperIDAndSwpeeID:      true,
 					isMockInsertUserSwipeLog:                       true,
 				},
 				getSwipeCountByAccountIDResp: getSwipeCountByAccountIDResp{
@@ -273,6 +374,9 @@ func Test_ProcessUserSwipe(t *testing.T) {
 					resp: model.AccountBaseModel{
 						ID: 2,
 					},
+				},
+				getUserSwipeLogBySwiperIDAndSwpeeIDResp: getUserSwipeLogBySwiperIDAndSwpeeIDResp{
+					resp: model.UserSwipeLogBaseModel{},
 				},
 				insertUserSwipeLogResp: insertUserSwipeLogResp{
 					err: errors.New("error internal"),
@@ -294,6 +398,7 @@ func Test_ProcessUserSwipe(t *testing.T) {
 					isMockFindOneAccountBySwiperAccountMaskID:      true,
 					isMockGetPremiumPackageUserByTitleAndAccountID: true,
 					isMockFindOneAccountBySwipeeAccountMaskID:      true,
+					isMockGetUserSwipeLogBySwiperIDAndSwpeeID:      true,
 					isMockInsertUserSwipeLog:                       true,
 				},
 				getSwipeCountByAccountIDResp: getSwipeCountByAccountIDResp{
@@ -318,6 +423,9 @@ func Test_ProcessUserSwipe(t *testing.T) {
 						ID: 2,
 					},
 				},
+				getUserSwipeLogBySwiperIDAndSwpeeIDResp: getUserSwipeLogBySwiperIDAndSwpeeIDResp{
+					resp: model.UserSwipeLogBaseModel{},
+				},
 				insertUserSwipeLogResp: insertUserSwipeLogResp{
 					err: nil,
 				},
@@ -332,7 +440,7 @@ func Test_ProcessUserSwipe(t *testing.T) {
 			mockPremiumPackageRepo := mocks.NewMockIPremiumPackageRepo(mockCtr)
 			mockUserSwipeLogRepo := mocks.NewMockIUserSwipeLogRepo(mockCtr)
 
-			s := service.NewUserSwipeLogService(mockUserSwipeLogRepo, mockAccountRepo, mockPremiumPackageRepo)
+			s := service.NewUserSwipeLogService(mockUserSwipeLogRepo, mockAccountRepo, mockPremiumPackageRepo, 10)
 
 			if tt.mockScenario.isMockEnable.isMockGetSwipeCountByAccountID {
 				mockUserSwipeLogRepo.EXPECT().GetSwipeCountByAccountID(gomock.Any(), gomock.Any()).Return(tt.mockScenario.getSwipeCountByAccountIDResp.resp, tt.mockScenario.getSwipeCountByAccountIDResp.err)
@@ -348,6 +456,10 @@ func Test_ProcessUserSwipe(t *testing.T) {
 
 			if tt.mockScenario.isMockEnable.isMockFindOneAccountBySwipeeAccountMaskID {
 				mockAccountRepo.EXPECT().FindOneAccountByAccountMaskID(gomock.Any(), gomock.Any()).Return(tt.mockScenario.findOneAccountByAccountSwipeeMaskIDResp.resp, tt.mockScenario.findOneAccountByAccountSwipeeMaskIDResp.err)
+			}
+
+			if tt.mockScenario.isMockEnable.isMockGetUserSwipeLogBySwiperIDAndSwpeeID {
+				mockUserSwipeLogRepo.EXPECT().GetUserSwipeLogBySwiperIDAndSwpeeID(gomock.Any(), gomock.Any(), gomock.Any()).Return(tt.mockScenario.getUserSwipeLogBySwiperIDAndSwpeeIDResp.resp, tt.mockScenario.getUserSwipeLogBySwiperIDAndSwpeeIDResp.err)
 			}
 
 			if tt.mockScenario.isMockEnable.isMockInsertUserSwipeLog {

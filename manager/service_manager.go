@@ -79,7 +79,9 @@ var (
 
 func (s *serviceManager) UserSwipeLogService() interfaces.IUserSwipeLogService {
 	userSwipeLogServiceOnce.Do(func() {
-		userSwipeLogService = service.NewUserSwipeLogService(s.repo.UserSwipeLogRepoManager(), s.repo.AccountRepoManager(), s.repo.PremiumPackageRepoManager())
+		key := s.infra.Config().Sub("user_swipe")
+
+		userSwipeLogService = service.NewUserSwipeLogService(s.repo.UserSwipeLogRepoManager(), s.repo.AccountRepoManager(), s.repo.PremiumPackageRepoManager(), key.GetInt("max_swipe_a_day"))
 	})
 	return userSwipeLogService
 }

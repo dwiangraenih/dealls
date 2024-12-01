@@ -48,5 +48,5 @@ func (u *userSwipeLogHandler) ProcessUserSwipe(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	response.HandleSuccess(w, http.StatusOK, nil)
+	response.HandleSuccess(w, nil)
 }

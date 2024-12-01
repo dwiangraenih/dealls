@@ -24,18 +24,12 @@ func Test_GetListPremiumPackagePagination(t *testing.T) {
 	defer mockCtr.Finish()
 
 	type isMockEnable struct {
-		isMockGetListPremiumPackagePagination  bool
-		isMockFindOneAccountByAccountMaskID    bool
-		isMockGetPremiumPackageUserByAccountID bool
+		isMockGetListPremiumPackagePagination      bool
+		isMockGetPremiumPackageUserByAccountMaskID bool
 	}
 
 	type getListPremiumPackagePaginationResp struct {
 		resp []model.PremiumPackageBaseModel
-		err  error
-	}
-
-	type findOneAccountByAccountMaskIDResp struct {
-		resp model.AccountBaseModel
 		err  error
 	}
 
@@ -52,7 +46,6 @@ func Test_GetListPremiumPackagePagination(t *testing.T) {
 	type mockScenario struct {
 		isMockEnable                         isMockEnable
 		getListPremiumPackagePaginationResp  getListPremiumPackagePaginationResp
-		findOneAccountByAccountMaskIDResp    findOneAccountByAccountMaskIDResp
 		getPremiumPackageUserByAccountIDResp getPremiumPackageUserByAccountIDResp
 	}
 
@@ -99,38 +92,6 @@ func Test_GetListPremiumPackagePagination(t *testing.T) {
 			msgErr:  utils.ErrInternal,
 		},
 		{
-			name:    "error find one account by account mask id",
-			service: MockNewPremiumPackageService(MockPremiumPackageService{}),
-			args: args{
-				ctx: defCtx,
-				req: model.PaginationRequest{
-					Limit:         1,
-					AccountMaskID: "123",
-					Cursor:        "qDoKxg65k1",
-				},
-			},
-			mockScenario: mockScenario{
-				isMockEnable: isMockEnable{
-					isMockGetListPremiumPackagePagination: true,
-					isMockFindOneAccountByAccountMaskID:   true,
-				},
-				getListPremiumPackagePaginationResp: getListPremiumPackagePaginationResp{
-					resp: []model.PremiumPackageBaseModel{
-						{
-							ID: 1,
-						},
-					},
-				},
-				findOneAccountByAccountMaskIDResp: findOneAccountByAccountMaskIDResp{
-					resp: model.AccountBaseModel{},
-					err:  errors.New("error find one account by account mask id"),
-				},
-			},
-			want:    model.ListPackagePagination{},
-			wantErr: true,
-			msgErr:  utils.ErrInternal,
-		},
-		{
 			name:    "error get premium package user by account id",
 			service: MockNewPremiumPackageService(MockPremiumPackageService{}),
 			args: args{
@@ -142,9 +103,8 @@ func Test_GetListPremiumPackagePagination(t *testing.T) {
 			},
 			mockScenario: mockScenario{
 				isMockEnable: isMockEnable{
-					isMockGetListPremiumPackagePagination:  true,
-					isMockFindOneAccountByAccountMaskID:    true,
-					isMockGetPremiumPackageUserByAccountID: true,
+					isMockGetListPremiumPackagePagination:      true,
+					isMockGetPremiumPackageUserByAccountMaskID: true,
 				},
 				getListPremiumPackagePaginationResp: getListPremiumPackagePaginationResp{
 					resp: []model.PremiumPackageBaseModel{
@@ -155,12 +115,6 @@ func Test_GetListPremiumPackagePagination(t *testing.T) {
 							ID: 2,
 						},
 					},
-				},
-				findOneAccountByAccountMaskIDResp: findOneAccountByAccountMaskIDResp{
-					resp: model.AccountBaseModel{
-						ID: 1,
-					},
-					err: nil,
 				},
 				getPremiumPackageUserByAccountIDResp: getPremiumPackageUserByAccountIDResp{
 					resp: []model.PremiumPackageUserBaseModel{},
@@ -179,6 +133,7 @@ func Test_GetListPremiumPackagePagination(t *testing.T) {
 				req: model.PaginationRequest{
 					Limit:         1,
 					AccountMaskID: "123",
+					Cursor:        "123",
 				},
 			},
 			mockScenario: mockScenario{
@@ -204,9 +159,8 @@ func Test_GetListPremiumPackagePagination(t *testing.T) {
 			},
 			mockScenario: mockScenario{
 				isMockEnable: isMockEnable{
-					isMockGetListPremiumPackagePagination:  true,
-					isMockFindOneAccountByAccountMaskID:    true,
-					isMockGetPremiumPackageUserByAccountID: true,
+					isMockGetListPremiumPackagePagination:      true,
+					isMockGetPremiumPackageUserByAccountMaskID: true,
 				},
 				getListPremiumPackagePaginationResp: getListPremiumPackagePaginationResp{
 					resp: []model.PremiumPackageBaseModel{
@@ -222,11 +176,6 @@ func Test_GetListPremiumPackagePagination(t *testing.T) {
 						},
 					},
 					err: nil,
-				},
-				findOneAccountByAccountMaskIDResp: findOneAccountByAccountMaskIDResp{
-					resp: model.AccountBaseModel{
-						ID: 1,
-					},
 				},
 				getPremiumPackageUserByAccountIDResp: getPremiumPackageUserByAccountIDResp{
 					resp: []model.PremiumPackageUserBaseModel{},
@@ -265,9 +214,8 @@ func Test_GetListPremiumPackagePagination(t *testing.T) {
 			},
 			mockScenario: mockScenario{
 				isMockEnable: isMockEnable{
-					isMockGetListPremiumPackagePagination:  true,
-					isMockFindOneAccountByAccountMaskID:    true,
-					isMockGetPremiumPackageUserByAccountID: true,
+					isMockGetListPremiumPackagePagination:      true,
+					isMockGetPremiumPackageUserByAccountMaskID: true,
 				},
 				getListPremiumPackagePaginationResp: getListPremiumPackagePaginationResp{
 					resp: []model.PremiumPackageBaseModel{
@@ -283,11 +231,6 @@ func Test_GetListPremiumPackagePagination(t *testing.T) {
 						},
 					},
 					err: nil,
-				},
-				findOneAccountByAccountMaskIDResp: findOneAccountByAccountMaskIDResp{
-					resp: model.AccountBaseModel{
-						ID: 1,
-					},
 				},
 				getPremiumPackageUserByAccountIDResp: getPremiumPackageUserByAccountIDResp{
 					resp: []model.PremiumPackageUserBaseModel{
@@ -331,12 +274,8 @@ func Test_GetListPremiumPackagePagination(t *testing.T) {
 				mockPremiumPackageRepo.EXPECT().GetListPremiumPackagePagination(gomock.Any(), gomock.Any()).Return(tt.mockScenario.getListPremiumPackagePaginationResp.resp, tt.mockScenario.getListPremiumPackagePaginationResp.err)
 			}
 
-			if tt.mockScenario.isMockEnable.isMockFindOneAccountByAccountMaskID {
-				mockAccountRepo.EXPECT().FindOneAccountByAccountMaskID(gomock.Any(), gomock.Any()).Return(tt.mockScenario.findOneAccountByAccountMaskIDResp.resp, tt.mockScenario.findOneAccountByAccountMaskIDResp.err)
-			}
-
-			if tt.mockScenario.isMockEnable.isMockGetPremiumPackageUserByAccountID {
-				mockPremiumPackageRepo.EXPECT().GetPremiumPackageUserByAccountID(gomock.Any(), gomock.Any()).Return(tt.mockScenario.getPremiumPackageUserByAccountIDResp.resp, tt.mockScenario.getPremiumPackageUserByAccountIDResp.err)
+			if tt.mockScenario.isMockEnable.isMockGetPremiumPackageUserByAccountMaskID {
+				mockPremiumPackageRepo.EXPECT().GetPremiumPackageUserByAccountMaskID(gomock.Any(), gomock.Any()).Return(tt.mockScenario.getPremiumPackageUserByAccountIDResp.resp, tt.mockScenario.getPremiumPackageUserByAccountIDResp.err)
 			}
 
 			got, err := s.GetListPremiumPackagePagination(tt.args.ctx, tt.args.req)

@@ -29,3 +29,6 @@ database = {{database}}
 [rsa]
 private_key =
 public_key =
+
+[user_swipe]
+max_swipe_a_day = 10

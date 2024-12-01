@@ -1,12 +1,11 @@
 package model
 
 type UserSwipeLogBaseModel struct {
-	ID            string `db:"id"`
-	SwiperID      int64  `db:"swiper_id"`
-	SwipeeID      int64  `db:"swipee_id"`
-	SwipeType     string `db:"swipe_type"`
-	CreatedAt     string `db:"created_at"`
-	ConvertedDate string `db:"converted_date"`
+	ID        int64  `db:"id"`
+	SwiperID  int64  `db:"swiper_id"`
+	SwipeeID  int64  `db:"swipee_id"`
+	SwipeType string `db:"swipe_type"`
+	CreatedAt string `db:"created_at"`
 }
 
 type UserSwipeRequest struct {

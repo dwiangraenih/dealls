@@ -47,13 +47,18 @@ func (c *authHandler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
+		if !errors.Is(err, utils.ErrInternal) {
+			response.HandleError(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
 		response.HandleError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	data, err := c.authService.Register(r.Context(), req)
 	if err != nil {
-		if errors.Is(err, utils.ErrBadRequest) {
+		if !errors.Is(err, utils.ErrInternal) {
 			response.HandleError(w, http.StatusBadRequest, err.Error())
 			return
 		}
