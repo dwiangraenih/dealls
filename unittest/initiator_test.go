@@ -41,8 +41,9 @@ type MockUserSwipeLogService struct {
 	userSwipeLogRepo   interfaces.IUserSwipeLogRepo
 	accountRepo        interfaces.IAccountRepo
 	premiumPackageRepo interfaces.IPremiumPackageRepo
+	maxSwipeADay       int
 }
 
 func MockNewUserSwipeLogService(ms MockUserSwipeLogService) interfaces.IUserSwipeLogService {
-	return service.NewUserSwipeLogService(ms.userSwipeLogRepo, ms.accountRepo, ms.premiumPackageRepo)
+	return service.NewUserSwipeLogService(ms.userSwipeLogRepo, ms.accountRepo, ms.premiumPackageRepo, ms.maxSwipeADay)
 }

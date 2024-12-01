@@ -12,7 +12,9 @@ var (
 
 	// premium package user
 	RepoGetPremiumPackageUserByAccountID = `
-	SELECT "id", "premium_package_id", "account_id", "purchased_date" FROM premium_package_user WHERE account_id = $1;`
+	SELECT "premium_package_user"."id", "premium_package_user"."premium_package_id", "premium_package_user"."account_id", "premium_package_user"."purchased_date" FROM premium_package_user 
+	INNER JOIN "account" ON "account".id = "premium_package_user".account_id
+		WHERE account.account_mask_id = $1;`
 
 	RepoInsertPremiumPackageUser = `
 	INSERT INTO premium_package_user ("premium_package_id", "account_id")

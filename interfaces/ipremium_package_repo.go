@@ -11,7 +11,7 @@ type IPremiumPackageRepo interface {
 	GetListPremiumPackagePagination(ctx context.Context, req model.PaginationRequest) (output []model.PremiumPackageBaseModel, err error)
 
 	// premium package user
-	GetPremiumPackageUserByAccountID(ctx context.Context, accountID int64) (output []model.PremiumPackageUserBaseModel, err error)
+	GetPremiumPackageUserByAccountMaskID(ctx context.Context, accountMaskID string) (output []model.PremiumPackageUserBaseModel, err error)
 	InsertPremiumPackageUser(ctx context.Context, trx *sql.Tx, req *model.PremiumPackageUserBaseModel) (err error)
 	GetPremiumPackageByPackageUID(ctx context.Context, packageUID string) (output model.PremiumPackageBaseModel, err error)
 	GetPremiumPackageUserByTitleAndAccountID(ctx context.Context, title string, accountID int64) (output model.PremiumPackageUserBaseModel, err error)

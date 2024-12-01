@@ -52,8 +52,8 @@ func (p *premiumPackageRepo) GetListPremiumPackagePagination(ctx context.Context
 	return resp, nil
 }
 
-func (p *premiumPackageRepo) GetPremiumPackageUserByAccountID(ctx context.Context, accountID int64) (output []model.PremiumPackageUserBaseModel, err error) {
-	if err = p.db.SelectContext(ctx, &output, RepoGetPremiumPackageUserByAccountID, accountID); err != nil {
+func (p *premiumPackageRepo) GetPremiumPackageUserByAccountMaskID(ctx context.Context, accountMaskID string) (output []model.PremiumPackageUserBaseModel, err error) {
+	if err = p.db.SelectContext(ctx, &output, RepoGetPremiumPackageUserByAccountID, accountMaskID); err != nil {
 		return output, err
 	}
 

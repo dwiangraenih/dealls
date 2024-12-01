@@ -15,14 +15,18 @@ type userSwipeLogCtx struct {
 	userSwipeLogRepo   interfaces.IUserSwipeLogRepo
 	accountRepo        interfaces.IAccountRepo
 	premiumPackageRepo interfaces.IPremiumPackageRepo
+	maxSwipeADay       int
 }
 
 func NewUserSwipeLogService(userSwipeLogRepo interfaces.IUserSwipeLogRepo,
 	accountRepo interfaces.IAccountRepo,
-	premiumPackageRepo interfaces.IPremiumPackageRepo) interfaces.IUserSwipeLogService {
+	premiumPackageRepo interfaces.IPremiumPackageRepo,
+	maxSwipeADay int) interfaces.IUserSwipeLogService {
 	return &userSwipeLogCtx{userSwipeLogRepo: userSwipeLogRepo,
 		accountRepo:        accountRepo,
-		premiumPackageRepo: premiumPackageRepo}
+		premiumPackageRepo: premiumPackageRepo,
+		maxSwipeADay:       maxSwipeADay,
+	}
 }
 
 func (u *userSwipeLogCtx) ProcessUserSwipe(ctx context.Context, req model.UserSwipeRequest) error {
@@ -62,7 +66,7 @@ func (u *userSwipeLogCtx) ProcessUserSwipe(ctx context.Context, req model.UserSw
 		return utils.ErrInternal
 	}
 
-	if swipeCount.TotalSwipeADay >= 10 && premiumPackageUser.ID == 0 {
+	if swipeCount.TotalSwipeADay >= u.maxSwipeADay && premiumPackageUser.ID == 0 {
 		log.Printf("%s: total swipe a day is already reach the limit", logFields)
 		return errors.New("total swipe a day is already reach the limit, upgrade your account to get more swipe")
 	}
@@ -72,6 +76,18 @@ func (u *userSwipeLogCtx) ProcessUserSwipe(ctx context.Context, req model.UserSw
 	if err != nil {
 		log.Printf("%s: error get account by account mask id: %v", logFields, err)
 		return utils.ErrInternal
+	}
+
+	// validate swipee user
+	swipeLog, err := u.userSwipeLogRepo.GetUserSwipeLogBySwiperIDAndSwpeeID(ctx, swiperAccount.ID, swipeeAccount.ID)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		log.Printf("%s: error get user swipe log by swiper id and swipee id: %v", logFields, err)
+		return utils.ErrInternal
+	}
+
+	if swipeLog.ID != 0 {
+		log.Printf("%s: user already swipe this user", logFields)
+		return errors.New("user already swipe this user")
 	}
 
 	// insert user swipe log

@@ -50,6 +50,21 @@ func (mr *MockIUserSwipeLogRepoMockRecorder) GetSwipeCountByAccountID(ctx, accou
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSwipeCountByAccountID", reflect.TypeOf((*MockIUserSwipeLogRepo)(nil).GetSwipeCountByAccountID), ctx, accountMaskID)
 }
 
+// GetUserSwipeLogBySwiperIDAndSwpeeID mocks base method.
+func (m *MockIUserSwipeLogRepo) GetUserSwipeLogBySwiperIDAndSwpeeID(ctx context.Context, swiperID, swipeeID int64) (model.UserSwipeLogBaseModel, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserSwipeLogBySwiperIDAndSwpeeID", ctx, swiperID, swipeeID)
+	ret0, _ := ret[0].(model.UserSwipeLogBaseModel)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserSwipeLogBySwiperIDAndSwpeeID indicates an expected call of GetUserSwipeLogBySwiperIDAndSwpeeID.
+func (mr *MockIUserSwipeLogRepoMockRecorder) GetUserSwipeLogBySwiperIDAndSwpeeID(ctx, swiperID, swipeeID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserSwipeLogBySwiperIDAndSwpeeID", reflect.TypeOf((*MockIUserSwipeLogRepo)(nil).GetUserSwipeLogBySwiperIDAndSwpeeID), ctx, swiperID, swipeeID)
+}
+
 // InsertUserSwipeLog mocks base method.
 func (m *MockIUserSwipeLogRepo) InsertUserSwipeLog(ctx context.Context, req model.UserSwipeLogBaseModel) (model.UserSwipeLogBaseModel, error) {
 	m.ctrl.T.Helper()

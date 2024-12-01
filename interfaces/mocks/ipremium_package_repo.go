@@ -66,19 +66,19 @@ func (mr *MockIPremiumPackageRepoMockRecorder) GetPremiumPackageByPackageUID(ctx
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPremiumPackageByPackageUID", reflect.TypeOf((*MockIPremiumPackageRepo)(nil).GetPremiumPackageByPackageUID), ctx, packageUID)
 }
 
-// GetPremiumPackageUserByAccountID mocks base method.
-func (m *MockIPremiumPackageRepo) GetPremiumPackageUserByAccountID(ctx context.Context, accountID int64) ([]model.PremiumPackageUserBaseModel, error) {
+// GetPremiumPackageUserByAccountMaskID mocks base method.
+func (m *MockIPremiumPackageRepo) GetPremiumPackageUserByAccountMaskID(ctx context.Context, accountMaskID string) ([]model.PremiumPackageUserBaseModel, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPremiumPackageUserByAccountID", ctx, accountID)
+	ret := m.ctrl.Call(m, "GetPremiumPackageUserByAccountMaskID", ctx, accountMaskID)
 	ret0, _ := ret[0].([]model.PremiumPackageUserBaseModel)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetPremiumPackageUserByAccountID indicates an expected call of GetPremiumPackageUserByAccountID.
-func (mr *MockIPremiumPackageRepoMockRecorder) GetPremiumPackageUserByAccountID(ctx, accountID interface{}) *gomock.Call {
+// GetPremiumPackageUserByAccountMaskID indicates an expected call of GetPremiumPackageUserByAccountMaskID.
+func (mr *MockIPremiumPackageRepoMockRecorder) GetPremiumPackageUserByAccountMaskID(ctx, accountMaskID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPremiumPackageUserByAccountID", reflect.TypeOf((*MockIPremiumPackageRepo)(nil).GetPremiumPackageUserByAccountID), ctx, accountID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPremiumPackageUserByAccountMaskID", reflect.TypeOf((*MockIPremiumPackageRepo)(nil).GetPremiumPackageUserByAccountMaskID), ctx, accountMaskID)
 }
 
 // GetPremiumPackageUserByTitleAndAccountID mocks base method.

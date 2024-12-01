@@ -29,3 +29,11 @@ func (u *userSwipeLog) GetSwipeCountByAccountID(ctx context.Context, accountMask
 	}
 	return resp, err
 }
+
+func (u *userSwipeLog) GetUserSwipeLogBySwiperIDAndSwpeeID(ctx context.Context, swiperID, swipeeID int64) (resp model.UserSwipeLogBaseModel, err error) {
+	if err = u.db.QueryRowContext(ctx, RepoGetUserSwipeLogBySwiperIDAndSwpeeID, swiperID, swipeeID).
+		Scan(&resp.ID, &resp.SwiperID, &resp.SwipeeID, &resp.SwipeType, &resp.CreatedAt); err != nil {
+		return resp, err
+	}
+	return resp, err
+}
